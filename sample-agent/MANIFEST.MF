@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Premain-Class: org.mule.sample.javaagent.DemoAgent
+Agent-Class: org.mule.sample.javaagent.DemoAgent
+Boot-Class-Path: demoagent.jar
+Permissions: all-permissions

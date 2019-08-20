@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<namespace xmlns="http://www.mulesoft.org/schema/mule/tooling.attributes" xmlns:mule="http://www.mulesoft.org/schema/mule/core" url="http://www.mulesoft.org/schema/mule/external-agent-loader" prefix="external-agent-loader">
+  <global-cloud-connector versions="[3.5.0,8.0.0]" caption="ExternalAgentLoader" description="" icon="" localId="parentConfig" image="" abstract="true" extends="http://www.mulesoft.org/schema/mule/external-agent-loader/abstractExternal-agent-loaderConnectorGeneric"></global-cloud-connector>
+  <global-cloud-connector versions="[3.5.0,8.0.0]" caption="ExternalAgentLoader: Configuration" description="Global Configuration configuration information." icon="icons/theme.classic/external-agent-loader-connector-small.png" localId="config" image="icons/theme.classic/external-agent-loader-connector-large.png" abstract="false" extends="http://www.mulesoft.org/schema/mule/external-agent-loader/parentConfig" connectivityTesting="off" metaData="static" metaDataKeyDisplay="DISPLAY_NAME" supportsUserDefinedMetaData="false">
+    <attribute-category caption="General" description="External-agent-loader configuration properties.">
+      <group id="external-agent-loaderGenericProperties" caption="Basic Settings">
+        <name name="name" caption="Name" description="Give a name to this configuration so it can be later referenced by config-ref." required="true"></name>
+      </group>
+      <group id="general" caption="General">
+        <string name="agentOptions" caption="Agent Options" description="" supportsExpressions="false" required="false" javaType="java.lang.String"></string>
+        <string name="applicationName" caption="Application Name" description="Optional: agent startup parameters." supportsExpressions="false" required="true" javaType="java.lang.String"></string>
+      </group>
+    </attribute-category>
+    <require>
+      <jar name="Java Agent Jar File" fileName="(.*)agent.jar" targetFolder="/lib/javaagent" targetRuntimeFolder="/classes" externalPluginDependency="true"></jar>
+    </require>
+  </global-cloud-connector>
+  <cloud-connector caption="Abstractexternal-agent-loaderconnectorgeneric" description="Interact with External-agent-loader." icon="icons/theme.classic/external-agent-loader-connector-small.png" localId="abstractExternal-agent-loaderConnectorGeneric" image="icons/theme.classic/external-agent-loader-connector-large.png" abstract="true">
+    <attribute-category caption="General" description="General.">
+      <group id="abstractExternal-agent-loaderConnectorGeneric" caption="Basic Settings">
+        <globalRef requiredType="http://www.mulesoft.org/schema/mule/external-agent-loader/config" name="config-ref" caption="Connector Configuration" description="Specify which configuration to use for this invocation." required="true"></globalRef>
+      </group>
+    </attribute-category>
+  </cloud-connector>
+  <cloud-connector versions="[3.5.0,8.0.0]" aliasId="org.mule.tooling.ui.modules.core.pattern.external-agent-loader" caption="ExternalAgentLoader" description="" icon="icons/theme.classic/external-agent-loader-connector-small.png" localId="external-agent-loader-connector" image="icons/theme.classic/external-agent-loader-connector-large.png" extends="http://www.mulesoft.org/schema/mule/external-agent-loader/abstractExternal-agent-loaderConnectorGeneric">
+    <attribute-category caption="General" description="General.">
+      <group id="external-agent-loaderConnectorGeneric" caption="Basic Settings">
+        <modeSwitch alwaysCombo="true" name="External-agent-loader operations to execute" caption="Operation" description="Operation.">
+          <no-operation abstractElement="http://www.mulesoft.org/schema/mule/external-agent-loader/abstractExternal-agent-loaderConnectorGeneric" versions="[3.5.0,8.0.0]" connector-name="processor"></no-operation>
+          <mode modeId="http://www.mulesoft.org/schema/mule/external-agent-loader/no-op" modeLabel="No op"></mode>
+        </modeSwitch>
+      </group>
+    </attribute-category>
+  </cloud-connector>
+  <cloud-connector returnType="void" caption="No Op" icon="icons/theme.classic/external-agent-loader-connector-small.png" localId="no-op" image="icons/theme.classic/external-agent-loader-connector-large.png" abstract="true" extends="http://www.mulesoft.org/schema/mule/external-agent-loader/abstractExternal-agent-loaderConnectorGeneric" metaData="static">
+    <attribute-category caption="General" description="General."></attribute-category>
+  </cloud-connector>
+</namespace>
