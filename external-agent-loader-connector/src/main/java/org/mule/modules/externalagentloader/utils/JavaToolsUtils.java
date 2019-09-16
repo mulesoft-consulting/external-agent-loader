@@ -1,6 +1,7 @@
 package org.mule.modules.externalagentloader.utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -11,8 +12,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.mule.modules.externalagentloader.config.ConnectorConfig;
+import org.mule.modules.externalagentloader.config.JVMTIAgentConfig;
+import org.mule.modules.externalagentloader.config.JavaAgentConfig;
 import org.mule.registry.MuleContextProcessor;
 
+import com.sun.tools.attach.AgentInitializationException;
+import com.sun.tools.attach.AgentLoadException;
 import com.sun.tools.attach.VirtualMachine;
 
 public class JavaToolsUtils {
@@ -52,40 +57,7 @@ public class JavaToolsUtils {
         return started;
     }   
 
-    public static void loadAgentJar(String jarFile, String agentOptions) {
-		String nameOfRunningVM = ManagementFactory.getRuntimeMXBean().getName();
-        String pid = nameOfRunningVM.substring(0, nameOfRunningVM.indexOf('@'));
-        
-        if (!ensureToolsJar()) return;
-        
-        String agent = null;
-        
-        try
-        {
-	        VirtualMachine vm = VirtualMachine.attach(pid);
-	        // get system properties in target VM
-	        Properties props = vm.getSystemProperties();
-	        
-	        // construct path to management agent
-	        String home = props.getProperty("mule.home");
-	        agent = home + File.separator + jarFile;
-	        
-	        log.log(Level.INFO, "Attempting to load agent: " + agent);
-	        vm.loadAgent(agent, agentOptions);
-	        vm.detach();
-	        log.log(Level.INFO, "Loaded agent: " + agent);
-        }
-        catch (Exception e) {
-        		if (agent != null) {
-        			File file = new File(agent);
-        			
-        			log.log(Level.WARNING, "File: " + agent + " exists=" + file.exists() + " and canread=" + file.canRead());
-        		}
-        		log.log(Level.WARNING, e.getMessage(), e);
-        }
-    }
-    
-    public static void loadAgentJars(ConnectorConfig config) {
+    public static void loadAgent(ConnectorConfig config) {
     		String nameOfRunningVM = ManagementFactory.getRuntimeMXBean().getName();
         String pid = nameOfRunningVM.substring(0, nameOfRunningVM.indexOf('@'));
         
@@ -100,26 +72,33 @@ public class JavaToolsUtils {
 	        Properties props = vm.getSystemProperties();
 	        
 	        // construct path to management agent
-	        File agentJarDir = new File(props.getProperty("mule.home") + File.separator + 
+	        File agentDir = new File(props.getProperty("mule.home") + File.separator + 
 	        			"apps" + File.separator +
 	        			config.getApplicationName() + File.separator +
 	        			"plugins" + File.separator +
 	        			"lib");
 	        
-	        for (File file : agentJarDir.listFiles()) {
-	        		if (file.getName().contains("agent")) {
-		        		try 
-		        		{
+	        for (File file : agentDir.listFiles()) {
+	        		try 
+	        		{
+        			
+	        			if (config instanceof JavaAgentConfig && file.getName().contains("agent")) {
+	        				log.log(Level.INFO, "Attempting to load agent: " + file.getPath());
+	        				vm.loadAgent(file.getPath(), config.getAgentOptions());
+		        			vm.detach();
+				        log.log(Level.INFO, "Loaded agent: " + file.getPath());
+				        break;
+		        		} else if (config instanceof JVMTIAgentConfig && (file.getName().endsWith(".so") || file.getName().endsWith(".dll"))) {
 		        			log.log(Level.INFO, "Attempting to load agent: " + file.getPath());
-				        vm.loadAgent(file.getPath(), config.getAgentOptions());
-				        vm.detach();
+	        				vm.loadAgentPath(file.getPath(), config.getAgentOptions());
+		        			vm.detach();
 				        log.log(Level.INFO, "Loaded agent: " + file.getPath());
 				        break;
 		        		}
-		        		catch(Exception e) {	
+	        		}
+		        	catch(Exception e) {	
 		            		log.log(Level.WARNING, "File: " + agent + " exists=" + file.exists() + " and canread=" + file.canRead());
 		            		log.log(Level.WARNING, e.getMessage(), e);
-		        		}
 	        		}
 	        }
         }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<namespace xmlns="http://www.mulesoft.org/schema/mule/tooling.attributes" xmlns:mule="http://www.mulesoft.org/schema/mule/core">
+    <require>
+       <jar name="JVM TI Agent Shared Library" targetFolder="/lib/javaagent" targetRuntimeFolder="/classes" fileName="(.*).so"/>
+    </require>
+</namespace>

@@ -20,8 +20,7 @@ public class ExternalAgentLoaderConnector {
     public void setConfig(ConnectorConfig config) {
         this.config = config;
         
-        //JavaToolsUtils.loadAgentJar(config.getAgentJar(), config.getAgentOptions());
-        JavaToolsUtils.loadAgentJars(config);
+        JavaToolsUtils.loadAgent(config);
     }
 
     /**

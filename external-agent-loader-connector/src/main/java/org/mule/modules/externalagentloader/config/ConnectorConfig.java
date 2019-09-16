@@ -1,6 +1,6 @@
 package org.mule.modules.externalagentloader.config;
 
-import org.mule.api.annotations.components.Configuration;
+//import org.mule.api.annotations.components.Configuration;
 
 import java.io.File;
 
@@ -8,8 +8,8 @@ import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.param.Default;
 import org.mule.api.annotations.param.Optional;
 
-@Configuration(friendlyName = "Configuration", configElementName="config")
-public class ConnectorConfig {
+//@Configuration(friendlyName = "Configuration", configElementName="config")
+public abstract class ConnectorConfig {
 
     /**
      * Relative path to the agent jar file
@@ -27,17 +27,7 @@ public class ConnectorConfig {
     @Optional
     private String agentOptions;
     
-    /*
-	public String getAgentJar() {
-		return agentJar;
-	}
-
-	public void setAgentJar(String agentJar) {
-		this.agentJar = agentJar;
-	}
-	*/
-    
-	public String getAgentOptions() {
+    	public String getAgentOptions() {
 		return agentOptions;
 	}
 
